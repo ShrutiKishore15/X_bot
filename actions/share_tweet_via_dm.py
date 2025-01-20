@@ -1,16 +1,32 @@
 import random
+import time
 from config import driver
 from appium.webdriver.common.appiumby import AppiumBy
-from actions.navigate_to_home import navigate_to_home
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from actions.utils.scroll_down import scroll_down_random
+from actions.utils.scroll_up import scroll_up_small
+from actions.utils.launch_app import launch_app
+
 
 def share_tweet_via_dm():
     try:
-        tweet_index = random.randint(0, 5)  # Randomly choose a tweet index
+        print("Scrolling down by a random amount...")
+        scroll_amount = scroll_down_random()
+
+        # Re-locate the tweet element after scrolling
+        print("Locating the first visible tweet after scrolling...")
+        tweet_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((
+                AppiumBy.ANDROID_UIAUTOMATOR,
+                'new UiSelector().resourceId("com.twitter.android:id/outer_layout_row_view_tweet").instance(0)'
+            ))
+        )
+        print("Located the first visible tweet after scrolling.")
+
         share_button = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((
                 AppiumBy.ANDROID_UIAUTOMATOR,
@@ -18,7 +34,7 @@ def share_tweet_via_dm():
             ))
         )
         share_button.click()
-        print(f"Clicked share button for tweet at index {tweet_index}.")
+        print(f"Clicked share button for tweet.")
 
         dm_option = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((
@@ -59,7 +75,10 @@ def share_tweet_via_dm():
         print("Tweet shared via DM.")
     except TimeoutException:
         print("Error: One or more elements could not be located within the timeout.")
+        launch_app()
     except Exception as e:
         print(f"Error while sharing tweet via DM: {e}")
+        launch_app()
     finally:
-        navigate_to_home()
+        scroll_up_small()
+        time.sleep(2)

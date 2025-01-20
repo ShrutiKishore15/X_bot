@@ -1,10 +1,11 @@
 import random
 from config import driver
 from appium.webdriver.common.appiumby import AppiumBy
-from actions.navigate_to_home import navigate_to_home
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from actions.utils.launch_app import launch_app
+
 
 def post_tweet():
     try:
@@ -45,5 +46,5 @@ def post_tweet():
         print("Clicked the 'Tweet' button. Tweet posted successfully.")
     except Exception as e:
         print(f"Error while posting tweet: {e}")
-    finally:
-        navigate_to_home()
+        launch_app()
+    
